@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { NextPage } from "next/types";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
+import Spinner from "../components/spinner";
 
 const Login: NextPage = (props) => {
   const { status, data } = useSession();
+  const [loading, setLoading] = useState(false);
+
   console.log({ status, data });
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
@@ -14,12 +18,14 @@ const Login: NextPage = (props) => {
     const password = data.get("password");
     console.log(email, password);
     // fazer login
+    setLoading(true);
     const response = await signIn("credentials", {
       email,
       password,
       callbackUrl: "/",
     });
     console.log({ response });
+    setLoading(false);
   };
   return (
     <div className="bg-white py-16 px-4 overflow-hidden sm:px-6 lg:px-8 lg:py-24 min-h-screen">
@@ -142,9 +148,10 @@ const Login: NextPage = (props) => {
             </div>
             <div className="sm:col-span-2">
               <button
+                disabled={loading}
                 type="submit"
-                className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors duration-150">
-                Entrar
+                className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors duration-150 disabled:bg-sky-700 disabled:cursor-not-allowed">
+                {loading ? <Spinner className="text-white h-6" /> : "Entrar"}
               </button>
             </div>
             <div className="sm:col-span-2">

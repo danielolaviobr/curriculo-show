@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
-import { hash } from "bcryptjs";
+import { compare } from "bcryptjs";
 import { loginSchema } from "../../../utils/zod";
 
 export const authOptions: NextAuthOptions = {
@@ -19,14 +19,13 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
   callbacks: {
-    session({ session, user }) {
+    session({ session, token }) {
       if (session.user) {
-        session.user.id = user.id;
+        session.accessToken = token.accessToken;
       }
       return session;
     },
   },
-  // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -36,19 +35,30 @@ export const authOptions: NextAuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials, req) {
-        const loginData = await loginSchema.parseAsync(credentials);
-        console.log(credentials, req);
+        try {
+          const loginData = await loginSchema.parseAsync(credentials);
+          console.log(credentials, req);
 
-        const hashedPassword = await hash(loginData.password, 10);
-        const user = await prisma.user.findFirst({
-          where: { email: credentials?.email },
-        });
+          const user = await prisma.user.findFirstOrThrow({
+            where: { email: credentials?.email },
+          });
 
-        console.log({ user });
+          const validPassword = await compare(
+            loginData.password,
+            user?.password
+          );
+          console.log({ user });
 
-        if (user?.password === hashedPassword) {
-          return user;
-        } else {
+          if (validPassword) {
+            console.log("OK");
+            return user;
+          } else {
+            console.log("Invalid password");
+            return null;
+          }
+        } catch (error) {
+          console.error(error);
+          console.log("ERROR");
           return null;
         }
       },

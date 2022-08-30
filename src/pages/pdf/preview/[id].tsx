@@ -1,23 +1,53 @@
-import type { NextPage, InferGetServerSidePropsType } from "next";
+import type {
+  NextPage,
+  InferGetServerSidePropsType,
+  GetServerSideProps,
+} from "next";
+import ResumePreview from "../../../components/resumePreview";
+import { FormInputs } from "../../../types/form";
+import { prisma } from "../../../server/db/client";
 
-const PdfPreview: NextPage = (props) => {
+interface Props {
+  data: FormInputs;
+}
+
+const PdfPreviewForPrint: NextPage<Props> = ({
+      data,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
-    <div className="bg-gray-300">
-      <div className="print:invisible">
-        <a
-          href="/api/pdf/generate"
-          download="generated_pdf.pdf"
-          className="mb-4 print:hidden print-blank">
-          Download
-        </a>
-      </div>
-      <main className="w-a4 h-a4 print:bg-blue-400 shadow-md m-auto flex flex-col items-center justify-center p-4 print:m-0 print:shadow-none bg-red-500 scale-75">
-        <h1 className="text-xl leading-normal font-extrabold text-gray-700">
-          Daniel Olavio Ferreira
-        </h1>
-      </main>
+    <div className="bg-gray-600 pt-[10%]">
+      <ResumePreview data={data} className="mx-auto" />
     </div>
   );
 };
 
-export default PdfPreview;
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const id = context.params?.id as string;
+
+  if (!id) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const data = await prisma?.resume.findUnique({
+    where: { id },
+    include: { education: true, experience: true, projects: true, user: true },
+  });
+
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      data: data as FormInputs,
+    },
+  };
+};
+
+export default PdfPreviewForPrint;

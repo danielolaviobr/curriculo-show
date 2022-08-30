@@ -5,7 +5,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/solid";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Education as EducationType, FormInputs } from "../types/form";
+import { Experience as ExperienceType, FormInputs } from "../types/form";
 import React, { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { Switch } from "@headlessui/react";
@@ -19,18 +19,17 @@ import {
 import DatePicker, { ReactDatePickerCustomHeaderProps } from "react-datepicker";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-// import "react-datepicker/dist/react-datepicker.css";
 
 interface Props {
-  item: EducationType;
+  item: ExperienceType;
   index: number;
   remove: UseFieldArrayRemove;
   register: UseFormRegister<FormInputs>;
   control: Control<FormInputs>;
-  value: EducationType;
+  value: ExperienceType;
 }
 
-export default function Education({
+export default function Experience({
   item,
   index,
   remove,
@@ -39,7 +38,7 @@ export default function Education({
   control,
 }: Props) {
   const [enabled, setEnabled] = useState(
-    item.institution || item.degree ? false : true
+    item.company || item.position ? false : true
   );
 
   return (
@@ -56,9 +55,11 @@ export default function Education({
             <div className="flex-grow min-w-0">
               <div className="lg:flex items-center overflow-hidden">
                 <p className="font-semibold text-sky-500 text-lg truncate">
-                  {value.institution}
+                  {value.company}
                 </p>
-                <p className="truncate lg:ml-1 text-gray-500">{value.degree}</p>
+                <p className="truncate lg:ml-1 text-gray-500">
+                  {value.position}
+                </p>
               </div>
             </div>
             {enabled && (
@@ -80,95 +81,71 @@ export default function Education({
           </div>
           {enabled && (
             <>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4 px-4 pt-6">
-                <div className="flex flex-col">
+              <div className="grid grid-cols-1 lg:grid-cols-6 gap-x-8 gap-y-4 px-4 pt-6">
+                <div className="flex flex-col lg:col-span-3">
                   <label
                     className="text-md font-medium text-gray-700 mb-2"
-                    htmlFor={`education.${index}.institution`}>
-                    Instituição
+                    htmlFor={`experience.${index}.company`}>
+                    Empresa
                   </label>
                   <input
                     className="block py-2 px-4 sm:text-md  w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border"
-                    placeholder="Universidade Federal"
-                    id={`education.${index}.institution`}
-                    {...register(`education.${index}.institution`)}
+                    placeholder="Google"
+                    id={`experience.${index}.company`}
+                    {...register(`experience.${index}.company`)}
                   />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col lg:col-span-3">
                   <label
                     className="text-md font-medium text-gray-700 mb-2"
-                    htmlFor={`education.${index}.degree`}>
-                    Curso
+                    htmlFor={`experience.${index}.position`}>
+                    Cargo
                   </label>
                   <input
                     className="block py-2 px-4 sm:text-md  w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border"
-                    placeholder="Engenharia de Software"
-                    id={`education.${index}.degree`}
-                    {...register(`education.${index}.degree`)}
+                    placeholder="Desenvolvedor"
+                    id={`experience.${index}.position`}
+                    {...register(`experience.${index}.position`)}
                   />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col lg:col-span-3">
                   <label
                     className="text-md font-medium text-gray-700 mb-2"
-                    htmlFor={`education.${index}.city`}>
+                    htmlFor={`experience.${index}.city`}>
                     Cidade
                   </label>
                   <input
                     className="block py-2 px-4 sm:text-md  w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border"
                     placeholder="Salvador"
-                    id={`education.${index}.city`}
-                    {...register(`education.${index}.city`)}
+                    id={`experience.${index}.city`}
+                    {...register(`experience.${index}.city`)}
                   />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col lg:col-span-3">
                   <label
                     className="text-md font-medium text-gray-700 mb-2"
-                    htmlFor={`education.${index}.state`}>
+                    htmlFor={`experience.${index}.state`}>
                     Estado
                   </label>
                   <input
                     className="block py-2 px-4 sm:text-md  w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border"
                     placeholder="Bahia"
-                    id={`education.${index}.state`}
-                    {...register(`education.${index}.state`)}
+                    id={`experience.${index}.state`}
+                    {...register(`experience.${index}.state`)}
                   />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col lg:col-span-2">
                   <label
                     className="text-md font-medium text-gray-700 mb-2"
-                    htmlFor={`education.${index}.startDate`}>
+                    htmlFor={`experience.${index}.startDate`}>
                     Início
                   </label>
                   <Controller
                     control={control}
-                    name={`education.${index}.startDate`}
+                    name={`experience.${index}.startDate`}
                     render={({ field: { onChange, onBlur, value } }) => (
                       <DatePicker
-                        id={`education.${index}.startDate`}
-                        className="block py-2 px-4 sm:text-md  w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border"
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        selected={value}
-                        locale={ptBR}
-                        dateFormat="MM/yyyy"
-                        showMonthYearPicker
-                        renderCustomHeader={MonthInputHeader}
-                      />
-                    )}
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label
-                    className="text-md font-medium text-gray-700 mb-2"
-                    htmlFor={`education.${index}.endDate`}>
-                    Término (ou previsto)
-                  </label>
-                  <Controller
-                    control={control}
-                    name={`education.${index}.endDate`}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <DatePicker
-                        id={`education.${index}.endDate`}
+                        id={`experience.${index}.startDate`}
                         className="block py-2 px-4 sm:text-md  w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border"
                         onBlur={onBlur}
                         onChange={onChange}
@@ -184,13 +161,56 @@ export default function Education({
                 <div className="flex flex-col lg:col-span-2">
                   <label
                     className="text-md font-medium text-gray-700 mb-2"
-                    htmlFor={`education.${index}.description`}>
+                    htmlFor={`experience.${index}.endDate`}>
+                    Fim
+                  </label>
+                  <Controller
+                    control={control}
+                    name={`experience.${index}.endDate`}
+                    render={({
+                      field: { onChange, onBlur, value: endDataValue },
+                    }) => (
+                      <DatePicker
+                        id={`experience.${index}.endDate`}
+                        className="block py-2 px-4 sm:text-md  w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        selected={value.isCurrent ? null : endDataValue}
+                        locale={ptBR}
+                        disabled={value.isCurrent ?? undefined}
+                        dateFormat="MM/yyyy"
+                        showMonthYearPicker
+                        renderCustomHeader={MonthInputHeader}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="flex flex-row items-center lg:col-span-2 space-x-2">
+                  <div className="h-full flex items-center justify-center">
+                    <input
+                      id={`experience.${index}.isCurrent`}
+                      aria-describedby="offers-description"
+                      type="checkbox"
+                      className="h-5 w-5 block sm:text-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border accent-sky-500"
+                      {...register(`experience.${index}.isCurrent`)}
+                    />
+                  </div>
+                  <label
+                    className="text-md font-medium text-gray-700 text-center"
+                    htmlFor={`experience.${index}.isCurrent`}>
+                    Trabalho atual
+                  </label>
+                </div>
+                <div className="flex flex-col lg:col-span-6">
+                  <label
+                    className="text-md font-medium text-gray-700 mb-2"
+                    htmlFor={`experience.${index}.description`}>
                     Descrição
                   </label>
                   <textarea
                     className="block py-2 px-4 sm:text-md  w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 border-gray-300 rounded-md border"
-                    id={`education.${index}.description`}
-                    {...register(`education.${index}.description`)}
+                    id={`experience.${index}.description`}
+                    {...register(`experience.${index}.description`)}
                   />
                 </div>
               </div>
@@ -198,8 +218,8 @@ export default function Education({
                 hidden
                 type="number"
                 value={index}
-                id={`education.${index}.index`}
-                {...register(`education.${index}.index`, {
+                id={`experience.${index}.index`}
+                {...register(`experience.${index}.index`, {
                   valueAsNumber: true,
                 })}
               />

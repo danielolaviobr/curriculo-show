@@ -10,10 +10,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id String @id @default(cuid())
-}
-
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -46,9 +42,9 @@ model User {
     name     String
     email    String    @unique
     password String
-    // accounts Account[]
     sessions Session[]
     Account  Account[]
+    Resume   Resume[]
 }
 
 model VerificationToken {
@@ -57,4 +53,72 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+enum Template {
+    BASIC
+}
+
+model Resume {
+    id           String       @id @default(cuid())
+    userId       String
+    user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt    DateTime     @default(now()) @map("created_at")
+    updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
+    template     Template
+    resumeTitle  String?
+    firstName    String?      @map("first_name")
+    lastName     String?      @map("last_name")
+    summary      String?      @map("summary")
+    currentTitle String?      @map("current_title")
+    email        String?
+    phone        String?
+    website      String?
+    education    Education[]
+    experience   Experience[]
+    projects     Project[]
+}
+
+model Education {
+    id          String    @id @default(uuid())
+    resumeId    String
+    resume      Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+    createdAt   DateTime  @default(now()) @map("created_at")
+    updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
+    institution String?
+    degree      String?
+    city        String?
+    state       String?
+    description String?
+    index       Int
+    startDate   DateTime? @map("start_date")
+    endDate     DateTime? @map("end_date")
+}
+
+model Experience {
+    id          String    @id @default(uuid())
+    resumeId    String
+    resume      Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+    createdAt   DateTime  @default(now()) @map("created_at")
+    updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
+    company     String?
+    position    String?
+    city        String?
+    state       String?
+    description String?
+    index       Int
+    isCurrent   Boolean?  @default(false) @map("is_current")
+    startDate   DateTime? @map("start_date")
+    endDate     DateTime? @map("end_date")
+}
+
+model Project {
+    id          String   @id @default(uuid())
+    resumeId    String
+    resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+    createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+    title       String?
+    description String?
+    index       Int
 }

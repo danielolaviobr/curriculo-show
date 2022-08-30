@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { NextPage } from "next/types";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
+import Spinner from "../components/spinner";
 import { trpc } from "../utils/trpc";
 
 const SignUp: NextPage = (props) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const { mutateAsync } = trpc.useMutation(["auth.signup"]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -18,11 +20,13 @@ const SignUp: NextPage = (props) => {
     console.log(email, password);
     // fazer login
     // const response = await signIn("credentials", { email, password });
+    setLoading(true);
     const response = await mutateAsync({ name, email, password });
     if (response.status === 201) {
       router.push("/");
     }
     console.log({ response });
+    setLoading(false);
   };
 
   return (
@@ -173,9 +177,14 @@ const SignUp: NextPage = (props) => {
             </div>
             <div className="sm:col-span-2">
               <button
+                disabled={loading}
                 type="submit"
-                className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors duration-150">
-                Criar conta
+                className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors duration-150 disabled:bg-sky-700 disabled:cursor-not-allowed">
+                {loading ? (
+                  <Spinner className="text-white h-6" />
+                ) : (
+                  "Criar conta"
+                )}
               </button>
             </div>
             <div className="sm:col-span-2">

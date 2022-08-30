@@ -2,10 +2,16 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import puppeteer from "puppeteer";
 
 const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { id } = req.query;
+  console.log(req.query);
+  if (!id) {
+    res.statusCode = 404;
+    return res.send({ error: "id not found" });
+  }
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
-
-  await page.goto("http://localhost:3000/pdf/1/", {
+  console.log(`http://localhost:3000/pdf/${id}`);
+  await page.goto(`http://localhost:3000/pdf/${id}`, {
     waitUntil: "networkidle0",
   });
   await page.addStyleTag({ content: ".print-blank { display: none}" });
@@ -15,7 +21,8 @@ const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
 
   await browser.close();
 
-  // res.set({ "Content-Type": "application/pdf", "Content-Length": pdf.length });
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Length", pdfBuffer.length);
   res.send(pdfBuffer);
 };
 
