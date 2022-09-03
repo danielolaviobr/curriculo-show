@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import puppeteer from "puppeteer";
+import playwright from "playwright";
 import { getBaseUrl } from "../../_app";
-import chromium from "chrome-aws-lambda";
 
 const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
@@ -10,22 +9,16 @@ const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
     res.statusCode = 404;
     return res.send({ error: "id not found" });
   }
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
-    ignoreHTTPSErrors: true,
-  });
-  const page = await browser.newPage();
+
+  const browser = await playwright.chromium.launch();
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
   await page.goto(`${getBaseUrl()}/pdf/${id}`, {
-    waitUntil: "networkidle0",
+    waitUntil: "networkidle",
   });
   await page.addStyleTag({ content: ".print-blank { display: none}" });
-  await page.emulateMediaType("screen");
-
   const pdfBuffer = await page.pdf({ format: "A4" });
-
   await browser.close();
 
   res.setHeader("Content-Type", "application/pdf");

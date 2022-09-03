@@ -44,7 +44,6 @@ const Dashboard: NextPage<Props> = ({
       setResumes((resumes) => resumes.filter((resume) => resume.id !== id));
     },
   });
-  console.log(resumes);
 
   function deleteResume(id: string) {
     console.log("deleting");

@@ -32,7 +32,7 @@ export default function ResumePreview({ data: propsData, className }: Props) {
           <div className="flex flex-col items-end text-gray-500">
             <span>{data?.email}</span>
             <span>{data?.phone}</span>
-            <span>{data?.website}</span>
+            <span>{data?.website && `https://${data?.website}`}</span>
           </div>
         </div>
         <div id="intro" className="mt-4">

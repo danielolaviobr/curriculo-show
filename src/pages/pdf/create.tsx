@@ -58,8 +58,8 @@ interface Props {
 }
 
 const CreatePdf: NextPage<Props> = ({
-  data,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      data,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [previousData, setPreviousData] = useState(data);
   const { update } = useFormState();
   const { register, handleSubmit, watch, control, setValue, getValues } =
@@ -165,7 +165,7 @@ const CreatePdf: NextPage<Props> = ({
               className="font-medium text-sm text-white bg-emerald-500 hover:bg-emerald-600 px-2 py-1 rounded transition duration-75 flex items-center disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed"
               disabled={resumeMutation.isLoading}
               type="submit">
-              {resumeMutation.isLoading ? "Carregando" : "Salvar"}
+              {resumeMutation.isLoading ? "Salvando" : "Salvar"}
               {resumeMutation.isLoading ? (
                 <Spinner className="ml-1" />
               ) : (
