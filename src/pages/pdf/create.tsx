@@ -26,6 +26,7 @@ import {
   Project,
 } from "../../types/form";
 import { v4 as uuid } from "uuid";
+import isEqual from "lodash/isEqual";
 
 const DragDropContext = dynamic(
   async () => {
@@ -57,8 +58,9 @@ interface Props {
 }
 
 const CreatePdf: NextPage<Props> = ({
-      data,
-    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  data,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [previousData, setPreviousData] = useState(data);
   const { update } = useFormState();
   const { register, handleSubmit, watch, control, setValue, getValues } =
     useForm<FormInputs>({
@@ -67,10 +69,16 @@ const CreatePdf: NextPage<Props> = ({
       },
       mode: "onBlur",
     });
-  const mutation = trpc.useMutation(["resume.upsert"], {
-    onSuccess: (data, variables, context) => {
+  const previewMutation = trpc.useMutation(["resume.preview"], {
+    onSuccess: () => {
+      console.log("generated preview");
+    },
+  });
+  const resumeMutation = trpc.useMutation(["resume.upsert"], {
+    onSuccess: (data) => {
       console.log("resulted");
       setValue("id", data.id);
+      previewMutation.mutate({ id: data.id });
     },
   });
   const {
@@ -117,13 +125,15 @@ const CreatePdf: NextPage<Props> = ({
     return () => subscribtion.unsubscribe();
   }, [watch, update]);
 
-  console.log(mutation.status);
   const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    console.log("submitting");
-    // setLoading(true)
-    const response = mutation.mutate(data);
-    console.log(response);
-    console.log(data);
+    const hasChange = !isEqual(data, previousData);
+
+    if (hasChange) {
+      console.log("submitting");
+      // setLoading(true)
+      resumeMutation.mutate(data);
+      setPreviousData(data);
+    }
   };
 
   const handleOnDragEnd = (result: DropResult, move: UseFieldArrayMove) => {
@@ -153,10 +163,10 @@ const CreatePdf: NextPage<Props> = ({
             </Link>
             <button
               className="font-medium text-sm text-white bg-emerald-500 hover:bg-emerald-600 px-2 py-1 rounded transition duration-75 flex items-center disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed"
-              disabled={mutation.isLoading}
+              disabled={resumeMutation.isLoading}
               type="submit">
-              {mutation.isLoading ? "Carregando" : "Salvar"}
-              {mutation.isLoading ? (
+              {resumeMutation.isLoading ? "Carregando" : "Salvar"}
+              {resumeMutation.isLoading ? (
                 <Spinner className="ml-1" />
               ) : (
                 <CheckIcon className="w-4 h-4 ml-1" />
@@ -397,7 +407,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     context.res,
     authOptions
   );
-  console.log(auth);
 
   if (!auth) {
     return {

@@ -25,6 +25,7 @@
     "bcryptjs": "^2.4.3",
     "date-fns": "^2.29.1",
     "framer-motion": "^7.2.1",
+    "lodash": "^4.17.21",
     "next": "12.2.3",
     "next-auth": "^4.10.2",
     "puppeteer": "^15.5.0",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/lodash": "^4.14.184",
     "@types/node": "18.0.0",
     "@types/react": "18.0.14",
     "@types/react-beautiful-dnd": "^13.1.2",

@@ -56,70 +56,112 @@ export const resumeRouter = createProtectedRouter()
       ),
     }),
     async resolve({ ctx, input }) {
-      const resume = await ctx.prisma.resume.upsert({
-        where: { id: input.id || "" },
-        create: {
-          firstName: input.firstName,
-          lastName: input.lastName,
-          currentTitle: input.currentTitle,
-          summary: input.summary,
-          email: input.email,
-          phone: input.phone,
-          resumeTitle: input.resumeTitle,
-          website: input.website,
-          user: { connect: { email: ctx.session.user.email as string } },
-          template: "BASIC",
-          experience: {
-            create: input.experience.map((experience) => ({
-              id: experience.id,
-              city: experience.city,
-              company: experience.company,
-              description: experience.description,
-              state: experience.state,
-              position: experience.position,
-              endDate: experience.endDate,
-              startDate: experience.startDate,
-              isCurrent: experience.isCurrent,
-              index: experience.index,
-            })),
+      console.time("query");
+      console.log(input.id);
+      if (input.id) {
+        await ctx.prisma.resume.update({
+          where: { id: input.id },
+          data: {
+            firstName: input.firstName,
+            lastName: input.lastName,
+            currentTitle: input.currentTitle,
+            summary: input.summary,
+            email: input.email,
+            phone: input.phone,
+            resumeTitle: input.resumeTitle,
+            website: input.website,
+            user: { connect: { email: ctx.session.user.email as string } },
+            template: "BASIC",
+            experience: {
+              upsert: input.experience.map((experience) => ({
+                where: { id: experience.id },
+                create: {
+                  id: experience.id,
+                  city: experience.city,
+                  company: experience.company,
+                  description: experience.description,
+                  state: experience.state,
+                  position: experience.position,
+                  endDate: experience.endDate,
+                  startDate: experience.startDate,
+                  isCurrent: experience.isCurrent,
+                  index: experience.index,
+                },
+                update: {
+                  city: experience.city,
+                  company: experience.company,
+                  description: experience.description,
+                  state: experience.state,
+                  position: experience.position,
+                  endDate: experience.endDate,
+                  startDate: experience.startDate,
+                  isCurrent: experience.isCurrent,
+                  index: experience.index,
+                },
+              })),
+            },
+            education: {
+              upsert: input.education.map((education) => ({
+                where: { id: education.id },
+                create: {
+                  id: education.id,
+                  city: education.city,
+                  institution: education.institution,
+                  description: education.description,
+                  state: education.state,
+                  degree: education.degree,
+                  endDate: education.endDate,
+                  startDate: education.startDate,
+                  index: education.index,
+                },
+                update: {
+                  city: education.city,
+                  institution: education.institution,
+                  description: education.description,
+                  state: education.state,
+                  degree: education.degree,
+                  endDate: education.endDate,
+                  startDate: education.startDate,
+                  index: education.index,
+                },
+              })),
+            },
+            projects: {
+              upsert: input.projects.map((project) => ({
+                where: { id: project.id },
+                create: {
+                  id: project.id,
+                  title: project.title,
+                  description: project.description,
+                  index: project.index,
+                },
+                update: {
+                  title: project.title,
+                  description: project.description,
+                  index: project.index,
+                },
+              })),
+            },
           },
-          education: {
-            create: input.education.map((education) => ({
-              id: education.id,
-              city: education.city,
-              institution: education.institution,
-              description: education.description,
-              state: education.state,
-              degree: education.degree,
-              endDate: education.endDate,
-              startDate: education.startDate,
-              index: education.index,
-            })),
-          },
-          projects: {
-            create: input.projects.map((project) => ({
-              id: project.id,
-              title: project.title,
-              description: project.description,
-              index: project.index,
-            })),
-          },
-        },
-        update: {
-          firstName: input.firstName,
-          lastName: input.lastName,
-          currentTitle: input.currentTitle,
-          summary: input.summary,
-          email: input.email,
-          phone: input.phone,
-          resumeTitle: input.resumeTitle,
-          website: input.website,
-          user: { connect: { email: ctx.session.user.email as string } },
-          template: "BASIC",
-          experience: {
-            upsert: input.experience.map((experience) => ({
-              where: { id: experience.id },
-              create: {
+        });
+        console.timeEnd("query");
+
+        return { id: input.id };
+      } else {
+        const resume = await ctx.prisma.resume.create({
+          data: {
+            firstName: input.firstName,
+            lastName: input.lastName,
+            currentTitle: input.currentTitle,
+            summary: input.summary,
+            email: input.email,
+            phone: input.phone,
+            resumeTitle: input.resumeTitle,
+            website: input.website,
+            user: { connect: { email: ctx.session.user.email as string } },
+            template: "BASIC",
+            experience: {
+              create: input.experience.map((experience) => ({
                 id: experience.id,
                 city: experience.city,
                 company: experience.company,
@@ -130,24 +172,10 @@ export const resumeRouter = createProtectedRouter()
                 startDate: experience.startDate,
                 isCurrent: experience.isCurrent,
                 index: experience.index,
-              },
-              update: {
-                city: experience.city,
-                company: experience.company,
-                description: experience.description,
-                state: experience.state,
-                position: experience.position,
-                endDate: experience.endDate,
-                startDate: experience.startDate,
-                isCurrent: experience.isCurrent,
-                index: experience.index,
-              },
-            })),
-          },
-          education: {
-            upsert: input.education.map((education) => ({
-              where: { id: education.id },
-              create: {
+              })),
+            },
+            education: {
+              create: input.education.map((education) => ({
                 id: education.id,
                 city: education.city,
                 institution: education.institution,
@@ -157,41 +185,167 @@ export const resumeRouter = createProtectedRouter()
                 endDate: education.endDate,
                 startDate: education.startDate,
                 index: education.index,
-              },
-              update: {
-                city: education.city,
-                institution: education.institution,
-                description: education.description,
-                state: education.state,
-                degree: education.degree,
-                endDate: education.endDate,
-                startDate: education.startDate,
-                index: education.index,
-              },
-            })),
-          },
-          projects: {
-            upsert: input.projects.map((project) => ({
-              where: { id: project.id },
-              create: {
+              })),
+            },
+            projects: {
+              create: input.projects.map((project) => ({
                 id: project.id,
                 title: project.title,
                 description: project.description,
                 index: project.index,
-              },
-              update: {
-                title: project.title,
-                description: project.description,
-                index: project.index,
-              },
-            })),
+              })),
+            },
           },
-        },
-        select: { id: true },
-      });
-      const previewImage = await getPreviewImage(resume.id);
-      await savePreviewImage(previewImage, resume.id);
-      return resume;
+          select: { id: true },
+        });
+        console.timeEnd("query");
+        return resume;
+      }
+      // const resume = await ctx.prisma.resume.upsert({
+      //   where: { id: input.id || "" },
+      //   create: {
+      //     firstName: input.firstName,
+      //     lastName: input.lastName,
+      //     currentTitle: input.currentTitle,
+      //     summary: input.summary,
+      //     email: input.email,
+      //     phone: input.phone,
+      //     resumeTitle: input.resumeTitle,
+      //     website: input.website,
+      //     user: { connect: { email: ctx.session.user.email as string } },
+      //     template: "BASIC",
+      //     experience: {
+      //       create: input.experience.map((experience) => ({
+      //         id: experience.id,
+      //         city: experience.city,
+      //         company: experience.company,
+      //         description: experience.description,
+      //         state: experience.state,
+      //         position: experience.position,
+      //         endDate: experience.endDate,
+      //         startDate: experience.startDate,
+      //         isCurrent: experience.isCurrent,
+      //         index: experience.index,
+      //       })),
+      //     },
+      //     education: {
+      //       create: input.education.map((education) => ({
+      //         id: education.id,
+      //         city: education.city,
+      //         institution: education.institution,
+      //         description: education.description,
+      //         state: education.state,
+      //         degree: education.degree,
+      //         endDate: education.endDate,
+      //         startDate: education.startDate,
+      //         index: education.index,
+      //       })),
+      //     },
+      //     projects: {
+      //       create: input.projects.map((project) => ({
+      //         id: project.id,
+      //         title: project.title,
+      //         description: project.description,
+      //         index: project.index,
+      //       })),
+      //     },
+      //   },
+      //   update: {
+      //     firstName: input.firstName,
+      //     lastName: input.lastName,
+      //     currentTitle: input.currentTitle,
+      //     summary: input.summary,
+      //     email: input.email,
+      //     phone: input.phone,
+      //     resumeTitle: input.resumeTitle,
+      //     website: input.website,
+      //     user: { connect: { email: ctx.session.user.email as string } },
+      //     template: "BASIC",
+      //     experience: {
+      //       upsert: input.experience.map((experience) => ({
+      //         where: { id: experience.id },
+      //         create: {
+      //           id: experience.id,
+      //           city: experience.city,
+      //           company: experience.company,
+      //           description: experience.description,
+      //           state: experience.state,
+      //           position: experience.position,
+      //           endDate: experience.endDate,
+      //           startDate: experience.startDate,
+      //           isCurrent: experience.isCurrent,
+      //           index: experience.index,
+      //         },
+      //         update: {
+      //           city: experience.city,
+      //           company: experience.company,
+      //           description: experience.description,
+      //           state: experience.state,
+      //           position: experience.position,
+      //           endDate: experience.endDate,
+      //           startDate: experience.startDate,
+      //           isCurrent: experience.isCurrent,
+      //           index: experience.index,
+      //         },
+      //       })),
+      //     },
+      //     education: {
+      //       upsert: input.education.map((education) => ({
+      //         where: { id: education.id },
+      //         create: {
+      //           id: education.id,
+      //           city: education.city,
+      //           institution: education.institution,
+      //           description: education.description,
+      //           state: education.state,
+      //           degree: education.degree,
+      //           endDate: education.endDate,
+      //           startDate: education.startDate,
+      //           index: education.index,
+      //         },
+      //         update: {
+      //           city: education.city,
+      //           institution: education.institution,
+      //           description: education.description,
+      //           state: education.state,
+      //           degree: education.degree,
+      //           endDate: education.endDate,
+      //           startDate: education.startDate,
+      //           index: education.index,
+      //         },
+      //       })),
+      //     },
+      //     projects: {
+      //       upsert: input.projects.map((project) => ({
+      //         where: { id: project.id },
+      //         create: {
+      //           id: project.id,
+      //           title: project.title,
+      //           description: project.description,
+      //           index: project.index,
+      //         },
+      //         update: {
+      //           title: project.title,
+      //           description: project.description,
+      //           index: project.index,
+      //         },
+      //       })),
+      //     },
+      //   },
+      //   select: { id: true },
+      // });
+    },
+  })
+  .mutation("preview", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      console.time("preview");
+      const previewImage = await getPreviewImage(input.id);
+      await savePreviewImage(previewImage, input.id);
+      console.timeEnd("preview");
+      return;
     },
   })
   .mutation("duplicate", {
