@@ -3,7 +3,7 @@ import { z } from "zod";
 import puppeteer from "puppeteer";
 import { supabase } from "../../utils/supabase";
 import { createProtectedRouter } from "./protected-router";
-import { Resume } from "@prisma/client";
+import chromium from "chrome-aws-lambda";
 import { getBaseUrl } from "../../pages/_app";
 
 // Example router with queries that can only be hit if the user requesting is signed in
@@ -421,11 +421,17 @@ export const resumeRouter = createProtectedRouter()
 
 async function getPreviewImage(resumeId: string) {
   const browser = await puppeteer.launch({
-    args: [`--window-size=1080,720`],
+    // args: [`--window-size=1080,720`],
+
     defaultViewport: {
       width: 1080,
       height: 720,
     },
+    args: chromium.args,
+    // defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+    ignoreHTTPSErrors: true,
   });
 
   const page = await browser.newPage();

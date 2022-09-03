@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import puppeteer from "puppeteer";
 import { getBaseUrl } from "../../_app";
+import chromium from "chrome-aws-lambda";
 
 const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
@@ -9,7 +10,13 @@ const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
     res.statusCode = 404;
     return res.send({ error: "id not found" });
   }
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+    ignoreHTTPSErrors: true,
+  });
   const page = await browser.newPage();
   await page.goto(`${getBaseUrl()}/pdf/${id}`, {
     waitUntil: "networkidle0",
