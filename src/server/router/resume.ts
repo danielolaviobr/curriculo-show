@@ -4,6 +4,7 @@ import { supabase } from "../../utils/supabase";
 import { createProtectedRouter } from "./protected-router";
 import { getBaseUrl } from "../../pages/_app";
 import playwright from "playwright";
+import chromium from "@sparticuz/chrome-aws-lambda";
 
 // Example router with queries that can only be hit if the user requesting is signed in
 export const resumeRouter = createProtectedRouter()
@@ -429,7 +430,9 @@ async function getPreviewImage(resumeId: string) {
   // });
 
   const browser = await playwright.chromium.launch({
-    args: ["--window-size=1080,720"],
+    args: [...chromium.args, "--window-size=1080,720"],
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
   });
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -447,6 +450,7 @@ async function getPreviewImage(resumeId: string) {
   const { data, error } = await supabase.storage
     .from("resume-previews")
     .upload(`${resumeId}.jpeg`, image, {
+      cacheControl: "10",
       upsert: true,
       contentType: "image/jpeg",
     });

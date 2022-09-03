@@ -282,6 +282,13 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.1.4.tgz#0c8b74c50f29ee44f423f7416829c0bf8bb5eb27"
   integrity sha512-LwzQKA4vzIct1zNZzBmRKI9QuNpLgTQMEjsQLf3BXuGYb3QPTP4Yjf6mkdX+X1mYttZ808QpOwAzZjv28kq7DA==
 
+"@sparticuz/chrome-aws-lambda@^17.0.0":
+  version "17.0.0"
+  resolved "https://registry.yarnpkg.com/@sparticuz/chrome-aws-lambda/-/chrome-aws-lambda-17.0.0.tgz#deb50e2dc820e54960b384dd2435973312b03471"
+  integrity sha512-YGtuOWWSWNSVoo7Ycng7X4bxgZHmrG2Y7sULuo8V+lzIxkH6uXeJ98vTAvwQZ5C7WZOWkKJLtbM3fWaN8vs+5Q==
+  dependencies:
+    tar-fs "^2.1.1"
+
 "@supabase/functions-js@^2.0.0-rc.1":
   version "2.0.0-rc.1"
   resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.0.0-rc.1.tgz#15e85ee22ab58db3f228ac94f338669d6635c6cc"
@@ -2814,7 +2821,7 @@ tailwindcss@^3.1.6:
     quick-lru "^5.1.1"
     resolve "^1.22.1"
 
-tar-fs@2.1.1:
+tar-fs@2.1.1, tar-fs@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/tar-fs/-/tar-fs-2.1.1.tgz#489a15ab85f1f0befabb370b7de4f9eb5cbe8784"
   integrity sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==

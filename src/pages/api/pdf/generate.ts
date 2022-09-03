@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import playwright from "playwright";
+import chromium from "@sparticuz/chrome-aws-lambda";
 import { getBaseUrl } from "../../_app";
 
 const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -10,7 +11,11 @@ const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.send({ error: "id not found" });
   }
 
-  const browser = await playwright.chromium.launch();
+  const browser = await playwright.chromium.launch({
+    args: chromium.args,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+  });
   const context = await browser.newContext();
   const page = await context.newPage();
 
