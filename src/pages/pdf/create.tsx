@@ -50,6 +50,7 @@ import Projects from "../../components/projects";
 import { trpc } from "../../utils/trpc";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
+import Spinner from "../../components/spinner";
 
 interface Props {
   data?: FormInputs;
@@ -116,8 +117,10 @@ const CreatePdf: NextPage<Props> = ({
     return () => subscribtion.unsubscribe();
   }, [watch, update]);
 
+  console.log(mutation.status);
   const onSubmit: SubmitHandler<FormInputs> = (data) => {
     console.log("submitting");
+    // setLoading(true)
     const response = mutation.mutate(data);
     console.log(response);
     console.log(data);
@@ -149,10 +152,15 @@ const CreatePdf: NextPage<Props> = ({
               </a>
             </Link>
             <button
-              className="font-medium text-sm text-white bg-emerald-500 hover:bg-emerald-600 px-2 py-1 rounded transition duration-75 flex items-center"
+              className="font-medium text-sm text-white bg-emerald-500 hover:bg-emerald-600 px-2 py-1 rounded transition duration-75 flex items-center disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed"
+              disabled={mutation.isLoading}
               type="submit">
-              Salvar
-              <CheckIcon className="w-4 h-4 ml-1" />
+              {mutation.isLoading ? "Carregando" : "Salvar"}
+              {mutation.isLoading ? (
+                <Spinner className="ml-1" />
+              ) : (
+                <CheckIcon className="w-4 h-4 ml-1" />
+              )}
             </button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4 px-4">
@@ -363,7 +371,7 @@ const CreatePdf: NextPage<Props> = ({
       <section className="h-screen bg-gray-700 shadow-inner hidden lg:flex lg:items-center lg:justify-center lg:col-span-5 relative">
         <Link href={`/api/pdf/generate?id=${getValues("id")}`} passHref>
           <a
-            download="resume.pdf"
+            download={`${getValues("resumeTitle") || "resume"}.pdf`}
             target="_blank"
             rel="noopener"
             className="absolute top-4 right-4 bg-sky-600 text-white py-1 px-2 h-auto rounded font-medium hover:bg-sky-700 flex items-center">

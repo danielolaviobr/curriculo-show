@@ -2,7 +2,7 @@ export default function Spinner(props: any) {
   return (
     <div className="flex justify-center">
       <svg
-        className="text-slate-800"
+        className="text-gray-800"
         viewBox="0 0 2400 2400"
         width={18}
         height={18}

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import puppeteer from "puppeteer";
+import { getBaseUrl } from "../../_app";
 
 const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
@@ -10,8 +11,7 @@ const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
   }
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
-  console.log(`http://localhost:3000/pdf/${id}`);
-  await page.goto(`http://localhost:3000/pdf/${id}`, {
+  await page.goto(`${getBaseUrl()}/pdf/${id}`, {
     waitUntil: "networkidle0",
   });
   await page.addStyleTag({ content: ".print-blank { display: none}" });

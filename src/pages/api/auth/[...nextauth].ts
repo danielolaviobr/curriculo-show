@@ -1,7 +1,5 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-// Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
 import { compare } from "bcryptjs";
@@ -19,9 +17,16 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
   callbacks: {
+    jwt: async ({ user, token }) => {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
     session({ session, token }) {
       if (session.user) {
         session.accessToken = token.accessToken;
+        session.user.id = token.sub;
       }
       return session;
     },
@@ -31,13 +36,12 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "email", type: "text", placeholder: "jsmith" },
+        email: { label: "email", type: "text" },
         password: { label: "password", type: "password" },
       },
       async authorize(credentials, req) {
         try {
           const loginData = await loginSchema.parseAsync(credentials);
-          console.log(credentials, req);
 
           const user = await prisma.user.findFirstOrThrow({
             where: { email: credentials?.email },
@@ -47,18 +51,15 @@ export const authOptions: NextAuthOptions = {
             loginData.password,
             user?.password
           );
-          console.log({ user });
 
           if (validPassword) {
-            console.log("OK");
             return user;
           } else {
-            console.log("Invalid password");
             return null;
           }
         } catch (error) {
-          console.error(error);
           console.log("ERROR");
+          console.error(error);
           return null;
         }
       },

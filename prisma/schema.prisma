@@ -69,11 +69,12 @@ model Resume {
     resumeTitle  String?
     firstName    String?      @map("first_name")
     lastName     String?      @map("last_name")
-    summary      String?      @map("summary")
+    summary      String?
     currentTitle String?      @map("current_title")
     email        String?
     phone        String?
     website      String?
+    previewImage String?      @map("preview_image")
     education    Education[]
     experience   Experience[]
     projects     Project[]

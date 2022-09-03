@@ -15,4 +15,5 @@ function defineNextConfig(config) {
 export default defineNextConfig({
   reactStrictMode: false,
   swcMinify: true,
+  images: { domains: ["ubpsctnihorwfmyaelyp.supabase.co"] },
 });
