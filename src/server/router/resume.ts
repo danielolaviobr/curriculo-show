@@ -419,23 +419,24 @@ export const resumeRouter = createProtectedRouter()
   });
 
 async function getPreviewImage(resumeId: string) {
-  await fetch
+  // await fetch
 
-  const { data, error } = await supabase.storage
-    .from("resume-previews")
-    .upload(`${resumeId}.jpeg`, image, {
-      cacheControl: "10",
-      upsert: true,
-      contentType: "image/jpeg",
-    });
+  // const { data, error } = await supabase.storage
+  //   .from("resume-previews")
+  //   .upload(`${resumeId}.jpeg`, image, {
+  //     cacheControl: "10",
+  //     upsert: true,
+  //     contentType: "image/jpeg",
+  //   });
 
-  if (error) throw new Error(JSON.stringify(error));
+  // if (error) throw new Error(JSON.stringify(error));
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("resume-previews").getPublicUrl(data.path);
+  // const {
+  //   data: { publicUrl },
+  // } = supabase.storage.from("resume-previews").getPublicUrl(data.path);
 
-  return publicUrl;
+  // return publicUrl;
+  return ""
 }
 
 async function savePreviewImage(previewImage: string, resumeId: string) {
