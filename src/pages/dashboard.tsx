@@ -31,8 +31,8 @@ interface Props {
 }
 
 const Dashboard: NextPage<Props> = ({
-  resumes: initialResumes,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      resumes: initialResumes,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [resumes, setResumes] = useState(initialResumes);
   const duplicateMutation = trpc.useMutation(["resume.duplicate"], {
     onSuccess: ({ resume }) => {
@@ -58,7 +58,7 @@ const Dashboard: NextPage<Props> = ({
   return (
     <div className="">
       <Header />
-      <main className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center gap-y-8 gap-x-4 mt-10">
+      <main className="grid grid-cols-1 mx-auto mt-10 max-w-7xl sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center gap-y-8 gap-x-4">
         <AnimatePresence initial={false}>
           {resumes
             .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
@@ -77,20 +77,20 @@ const Dashboard: NextPage<Props> = ({
                     src={`${resume.previewImage}`}
                     alt="Resume Preview"
                     objectFit="cover"
-                    className="rounded-t border-b shadow-sm border-gray-200"
+                    className="border-b border-gray-200 rounded-t shadow-sm"
                   />
                 )}
                 <div className="p-4 pt-2 max-w-[20rem] w-full md:w-[270px]">
-                  <span className="block font-semibold text-xs tracking-wide uppercase text-gray-600 truncate">
-                    {resume.resumeTitle}
+                  <span className="block text-xs font-semibold tracking-wide text-gray-600 uppercase truncate">
+                    {resume.resumeTitle || "Sem nome"}
                   </span>
-                  <span className="text-gray-700 text-sm truncate block">
+                  <span className="block text-sm text-gray-700 truncate">
                     Atualizado{" "}
                     {formatRelative(resume.updatedAt, new Date(), {
                       locale: ptBR,
                     })}
                   </span>
-                  <div className="flex items-center justify-start space-x-2 mt-2">
+                  <div className="flex items-center justify-start mt-2 space-x-2">
                     <Link
                       href={`/pdf/create?id=${resume.id}`}
                       aria-label="Editar">

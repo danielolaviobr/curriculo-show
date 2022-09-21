@@ -4,7 +4,6 @@ import { supabase } from "../../utils/supabase";
 import { createProtectedRouter } from "./protected-router";
 import { getBaseUrl } from "../../pages/_app";
 import playwright from "playwright";
-import chromium from "@sparticuz/chrome-aws-lambda";
 
 // Example router with queries that can only be hit if the user requesting is signed in
 export const resumeRouter = createProtectedRouter()
@@ -420,32 +419,7 @@ export const resumeRouter = createProtectedRouter()
   });
 
 async function getPreviewImage(resumeId: string) {
-  // const browser = await puppeteer.launch({
-  //   args: [`--window-size=1080,720`],
-
-  //   defaultViewport: {
-  //     width: 1080,
-  //     height: 720,
-  //   },
-  // });
-
-  const browser = await playwright.chromium.launch({
-    args: [...chromium.args, "--window-size=1080,720"],
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
-  });
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
-  // await page.goto(`${getBaseUrl()}/pdf/${id}`, {
-  //   waitUntil: "networkidle",
-  // });
-  // await page.addStyleTag({ content: ".print-blank { display: none}" });
-  // const pdfBuffer = await page.pdf({ format: "A4" });
-
-  await page.goto(`${getBaseUrl()}/pdf/preview/${resumeId}`);
-  const image = await page.screenshot({ type: "jpeg" });
-  await browser.close();
+  await fetch
 
   const { data, error } = await supabase.storage
     .from("resume-previews")
