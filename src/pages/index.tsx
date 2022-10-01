@@ -47,7 +47,7 @@ const Home: NextPage = (props) => {
           </h1>
           <h2 className="max-w-md mt-8 text-lg font-medium text-gray-600">
             Curriulos otimizados para sistemas automatizados e claros para
-            recreutadores
+            recrutadores
           </h2>
         </div>
         <div
@@ -79,13 +79,38 @@ const Home: NextPage = (props) => {
           <div className="z-10 flex items-center justify-center space-x-12">
             <div className="flex flex-col px-6 py-8 leading-6 scale-90 bg-white rounded-lg w-96 h-96">
               <div className="flex flex-col mb-8">
+                <span className="font-bold text-sky-500">Experimente</span>
+                <span className="text-5xl font-extrabold text-gray-800">
+                  Grátis
+                </span>
+              </div>
+              <p className="mb-6 font-medium text-gray-600">
+                Dois templates gratuitos para experimentar na sua busca por uma
+                vaga.
+              </p>
+              <button className="py-2 mb-6 font-semibold text-white transition duration-150 rounded-full shadow-md hover:bg-sky-600 bg-sky-500">
+                Comprar
+              </button>
+              <ul className="space-y-3 leading-8 text-gray-700 list-outside">
+                <li className="flex items-center">
+                  <CheckCircleIcon className="w-6 h-6 mr-3" />
+                  Dois templates proficinais
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="w-6 h-6 mr-3" />
+                  Downloads ilimitádos
+                </li>
+              </ul>
+            </div>
+            <div className="flex flex-col px-6 py-8 leading-6 scale-90 bg-white rounded-lg w-96 h-96">
+              <div className="flex flex-col mb-8">
                 <span className="font-bold text-sky-500">Cada template</span>
                 <span className="text-5xl font-extrabold text-gray-800">
                   R$ 10
                 </span>
               </div>
               <p className="mb-6 font-medium text-gray-600">
-                Um novo template para quem está começando sua busca
+                Um novo template para quem está começando sua busca.
               </p>
               <button className="py-2 mb-6 font-semibold text-white transition duration-150 rounded-full shadow-md hover:bg-sky-600 bg-sky-500">
                 Comprar
@@ -102,7 +127,6 @@ const Home: NextPage = (props) => {
               </ul>
             </div>
             <div className="p-2 bg-transparent border-4 rounded-2xl border-sky-500">
-              {/* ring-4 ring-offset-8 ring-offset-transparent ring-sky-500  */}
               <div className="bg-white rounded-lg w-96 h-[28rem] flex flex-col px-6 py-8 leading-6">
                 <div className="flex flex-col mb-8">
                   <span className="font-bold text-sky-500">Acesso total</span>
