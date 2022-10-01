@@ -16,6 +16,7 @@ const formatDate = (date: Date) => {
 export default function ResumePreview({ data: propsData, className }: Props) {
   const { data: stateData } = useFormState();
   const data = propsData || stateData;
+  console.log("DATA", data);
   return (
     <div
       className={`bg-white aspect-[210/297] min-h-[297mm] w-[210mm] antialiased overflow-y-scroll ${className}`}>
@@ -36,7 +37,7 @@ export default function ResumePreview({ data: propsData, className }: Props) {
           </div>
         </div>
         <div id="intro" className="mt-4">
-          <p className="text-sm text-gray-500 font-light text-justify tracking-wide">
+          <p className="text-sm font-light tracking-wide text-justify text-gray-500">
             {data?.summary}
           </p>
         </div>
@@ -71,7 +72,7 @@ export default function ResumePreview({ data: propsData, className }: Props) {
                         )}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 font-light text-justify tracking-wide">
+                    <p className="text-sm font-light tracking-wide text-justify text-gray-500">
                       {item?.description}
                     </p>
                   </div>
@@ -114,7 +115,7 @@ export default function ResumePreview({ data: propsData, className }: Props) {
                         )}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 font-light text-justify tracking-wide">
+                    <p className="text-sm font-light tracking-wide text-justify text-gray-500">
                       {item?.description}
                     </p>
                   </div>
@@ -135,7 +136,7 @@ export default function ResumePreview({ data: propsData, className }: Props) {
                     <h4 className="font-semibold text-gray-800">
                       {item?.title}
                     </h4>
-                    <p className="text-sm text-gray-500 font-light text-justify tracking-wide">
+                    <p className="text-sm font-light tracking-wide text-justify text-gray-500">
                       {item?.description}
                     </p>
                   </div>
