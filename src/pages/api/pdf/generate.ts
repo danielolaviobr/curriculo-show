@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import playwright from "playwright";
 import { getBaseUrl } from "../../_app";
 
+// This will be deprecated
 const generatePDF = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
   console.log(req.query);
